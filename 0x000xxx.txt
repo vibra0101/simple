@@ -1,0 +1,180 @@
+************************************************************************************************EX : 1******************************************************************************8
+from PyPDF2 import PdfReader
+reader = PdfReader('E:\BLOCKCHAIN.PPT.pdf')
+print(len(reader.pages))
+page = reader.pages[0]
+text = page.extract_text()
+print(text)
+
+
+*************************************************************************************************************************************************************************************
+
+import parsel
+import requests
+
+URL = "https://quotes.toscrape.com/"
+
+response = requests.get(URL).text
+
+selector = parsel.Selector(text=response)
+
+with open("amazing quotes.txt", 'w') as file:
+    file.write("AMAZING QUOTES\n\n")
+    file.write("*=*"*30)
+    file.write('\n\n')
+    for quote_section in selector.css('div.quote'):
+        quote = quote_section.xpath('.//span[@class="text"]//text()').get()
+        author = quote_section.xpath('.//small[@class="author"]//text()').get()
+        tags = quote_section.xpath('.//div[@class="tags"]//a[@class="tag"]//text()').getall()
+        tags = ', '.join(tags)
+        file.write(f'\n\n{quote}\n\nBy: {author}\n\nTags: {tags}\n\n')
+        file.write("*=*"*30)
+        file.write('\n\n')
+
+
+
+****************************************************************************************EX : 2*******************************************************************************************
+import requests
+from bs4 import BeautifulSoup
+url = "https://www.example.com"
+response = requests.get(url)
+if response.status_code == 200:
+    soup = BeautifulSoup(response.content, "html.parser")
+    paragraphs = soup.find_all("p")
+    scraped_text = [p.get_text() for p in paragraphs]   
+    for text in scraped_text:
+        print(text)
+else:
+    print("Failed to retrieve the webpage.")
+
+
+
+
+****************************************************************************************EX : 3*******************************************************************************************
+lookup_dict = {
+    "apple" : "A small fruit",
+    "cat" : "A small domestical carnivorous mammal",
+    "dog" : "A domestical carnivorous animal that typically has a long snourt,an acute smell of sense,and a barking,howling,or whining voice",
+    "car" : "A road vehicle, typically with four wheel spowered by an small number of people"
+    }
+short_words = []
+min_length = 4
+for word in lookup_dict.keys():
+    if len(word) < min_length:
+        short_words.append(word)
+        print("short words in the dictionary:")
+        for word in short_words:
+            print(word)
+
+
+
+***************************************************************************************EX : 4*********************************************************************************************
+from textblob import TextBlob
+def correct_spelling(text):
+    blob = TextBlob(text)
+    corrected_text = blob.correct()
+    return corrected_text
+input_text = "Helo, how aree dooing"
+corrected_text = correct_spelling(input_text)
+print("Corrected_text:", corrected_text)
+
+
+
+**************************************************************************************EX : 5************************************************************************************************
+def count(element):
+    if element [-1] == '.':
+        element = element[0:len(element)-1]
+
+    if element in dictionary:
+        dictionary[element] += 1
+    else:
+        dictionary.update({element:1})
+
+Sentence = "Computer Science science Computer science"
+dictionary = {}
+lst = Sentence.split()
+for element in lst:
+    count(element)
+
+for allKeys in dictionary:
+    print("Frequency of",allKeys,end = " ")
+    print(":",end = " ")
+    print(dictionary[allKeys],end=" ")
+    print()
+
+
+
+*********************************************************************************EX : 6**************************************************************************************
+from nltk import ngrams
+sentence = input("Enter the sequence: ")
+n = int(input("Enter the value of n: "))
+n_grams = ngrams(sentence.split(),n)
+for grams in n_grams:
+    print(grams)
+
+
+
+********************************************************************************EX : 7***************************************************************************************
+im0port pandas as pd
+df = pd.DataFrame({'Mobile':['samsung','oppo','vivo','Realme','IQ','Apple'],
+                   'Model':[1,1,0,0,1,2],
+                   'Processor':[1,2,3,0,9,0],
+                   'Battery':[1,4,5,6,0,0]}).set_index('Mobile')
+print(df)
+
+
+
+****************************************************************************EX : 8******************************************************************************************
+import spacy
+nlp = spacy.load("en_core_web_sm")
+sentence = "The quick brown fox jumps over the lazy dog"
+doc = nlp(sentence)
+noun_phrases = [chunk.text for chunk in doc.noun_chunks]
+for phrase in noun_phrases:
+    print(phrase)
+
+
+
+
+*******************************************************************************EX : 9**********************************************************************************
+import networkx as nx
+import matplotlib.pyplot as plt
+# Sample protein interaction data (replace with your own data)
+# The data should be in the form of edges (protein-protein interactions)
+interaction_data = [
+    ("ProteinA", "ProteinB"),
+    ("ProteinA", "ProteinC"),
+    ("ProteinB", "ProteinC"),
+    ("ProteinC", "ProteinD"),
+]
+protein_graph = nx.Graph()
+protein_graph.add_edges_from(interaction_data)
+degree_centrality = nx.degree_centrality(protein_graph)
+pos = nx.spring_layout(protein_graph)  # Choose a layout algorithm
+plt.figure(figsize=(10, 10))  # Set the figure size
+node_sizes = [3000 * degree_centrality[node] for node in protein_graph.nodes()]
+nx.draw_networkx_nodes(protein_graph, pos, node_size=node_sizes, node_color='skyblue', alpha=0.7)
+nx.draw_networkx_edges(protein_graph, pos, edge_color='gray', alpha=0.5)
+node_labels = {node: node for node in protein_graph.nodes()}
+nx.draw_networkx_labels(protein_graph, pos, labels=node_labels, font_size=10, font_color='black')
+plt.title("Protein Interaction Network")
+plt.axis('off')  # Turn off axis labels
+plt.show()
+
+
+
+******************************************************************EX : 10****************************************************************
+def dna_to_rna(dna_sequence):
+    """Convert a DNA sequence to RNA."""
+    return dna_sequence.replace('T', 'U')
+def rna_to_dna(rna_sequence):
+    """Convert an RNA sequence to DNA."""
+    return rna_sequence.replace('U', 'T')
+dna_sequence = "ATGCATGCTA"
+rna_sequence = "AUGCUGCUA"
+converted_rna = dna_to_rna(dna_sequence)
+converted_dna = rna_to_dna(rna_sequence)
+
+print(f"DNA to RNA: {dna_sequence} -> {converted_rna}")
+print(f"RNA to DNA: {rna_sequence} -> {converted_dna}")
+
