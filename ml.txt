@@ -1,0 +1,576 @@
+*******************************************1.write a python program to visualize all data points in scatter plot , bar plot and pie plot****************************************************
+Source code :
+import pandas as pd 
+import matplotlib.pyplot as plt
+df=pd.read_csv('C:/Users/Aravinthan CS/Downloads/Fifa_world_cup_matches.csv')
+df.head()
+# creating the scatter plot
+plt.scatter(df['number of goals team1'],df['number of goals team2'])
+plt.title("scatter plot")
+plt.xlabel('number of goals team1')
+plt.ylabel('number of goals team2')
+# creating the bar plot
+plt.bar(df['number of goals team1'], df['number of goals team2'], color ='maroon',
+        width = 0.4)
+plt.xlabel("number of goals team1")
+plt.ylabel("number of goals team2")
+plt.title("Bar plot")
+plt.show()
+# creating the pie plot
+plt.pie(df['number of goals team1'] , labels=df['number of goals team2'], startangle=140)
+plt.show()
+
+
+
+
+
+
+
+*****************************************************2.Build Artificial Neural Network Model with back propagation on a given dataset*****************************************************
+Source code :
+#installing the required Libraries
+pip install tensorflow pandas scikit-learn
+
+import pandas as pd
+import numpy as np
+import tensorflow as tf
+from tensorflow import keras
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.metrics import classification_report
+
+from google.colab import files
+uploaded = files.upload()
+import io
+df = pd.read_csv(io.BytesIO(uploaded['penguins.csv']))
+df.head()
+
+# Preprocessing
+# Remove unnecessary columns and NaN values
+data = df.drop(['island','sex',], axis=1)
+data = data.dropna()
+
+
+# Encode the target variable (species) using LabelEncoder
+label_encoder = LabelEncoder()
+data['species'] = label_encoder.fit_transform(data['species'])
+
+# Split the data into features (X) and target (y)
+X = data.drop('species', axis=1)
+y = data['species']
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Standardize features (scaling)
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# Build the ANN model
+model = keras.Sequential([
+    keras.layers.Dense(64, activation='relu', input_shape=(X_train.shape[1],)),
+    keras.layers.Dense(32, activation='relu'),
+    keras.layers.Dense(3, activation='softmax')  # 3 output neurons for 3 penguin species
+])
+
+# Compile the model
+model.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy',  # Multiclass classification loss function
+              metrics=['accuracy'])
+
+# Train the model
+model.fit(X_train, y_train, epochs=10, batch_size=32)
+
+# Evaluate the model
+y_pred = model.predict(X_test)
+y_pred_labels = np.argmax(y_pred, axis=1
+
+# Generate a classification report
+report = classification_report(y_test, y_pred_labels, target_names=label_encoder.classes_, output_dict=True)
+print(report)
+
+***********************************************************************3.Implement Linear regression using python***************************************************************************
+Source Code:
+import seaborn as sns
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+
+from google.colab import files
+uploaded = files.upload()
+
+import io
+data = pd.read_csv(io.BytesIO(uploaded['penguins (1).csv']))
+data.head()
+
+data.info()
+# Selecting the predictor variables (features) and target variable (flipper_length_mm)
+X = data[['bill_length_mm', 'bill_depth_mm', 'body_mass_g']]  # Features
+y = data['flipper_length_mm']  # Target variable
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_test)
+
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+print(f"Mean Squared Error: {mse}")
+print(f"R-squared: {r2}")
+
+plt.scatter(y_test, y_pred)
+plt.xlabel("Actual Flipper Length (mm)")
+plt.ylabel("Predicted Flipper Length (mm)")
+plt.title("Actual vs. Predicted Flipper Length")
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+***********************************************************4.write a python program to demonstrate the logistic regression******************************************************************
+Source code :
+from google.colab import files
+uploaded = files.upload()
+# Importing libraries
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from math import exp
+plt.rcParams["figure.figsize"] = (10, 6)
+import pandas as pd
+import io
+data = pd.read_csv(io.BytesIO(uploaded['Fifa_world_cup_matches.csv']))
+data.head()
+
+# Visualizing the dataset
+plt.scatter(data['goal preventions team1'], data['goal preventions team2'])
+plt.show()
+# Divide the data to training set and test set
+X_train, X_test, y_train, y_test = train_test_split(data['goal preventions team1'], data['goal preventions team2'], test_size=0.20)
+
+# Creating+ the logistic regression model
+# Helper function to normalize data
+def normalize(X):
+    return X - X.mean()
+# Method to make predictions
+def predict(X, b0, b1):
+    return np.array([1 / (1 + exp(-1*b0 + -1*b1*x)) for x in X])
+# Method to train the model
+def logistic_regression(X, Y):
+
+    X = normalize(X)
+    # Initializing variables
+    b0 = 0
+    b1 = 0
+    L = 0.001
+    epochs = 300
+    for epoch in range(epochs):
+        y_pred = predict(X, b0, b1)
+        D_b0 = -2 * sum((Y - y_pred) * y_pred * (1 - y_pred))  # Derivative of loss wrt b0
+        D_b1 = -2 * sum(X * (Y - y_pred) * y_pred * (1 - y_pred))  # Derivative of loss wrt b1
+        b0 = b0 - L * D_b0
+        b1 = b1 - L * D_b1
+    return b0, b1
+# Training the model
+b0, b1 = logistic_regression(X_train, y_train)
+# Making predictions
+# X_test = X_test.sort_values()  # Sorting values is optional only to see the line graph
+X_test_norm = normalize(X_test)
+y_pred = predict(X_test_norm, b0, b1)
+y_pred = [1 if p >= 0.5 else 0 for p in y_pred]
+plt.clf()
+plt.scatter(X_test, y_test)
+plt.scatter(X_test, y_pred, c="red")
+# plt.plot(X_test, y_pred, c="red", linestyle='-', marker='o') # Only if values are sorted
+plt.show()
+# The accuracy
+accuracy = 0
+for i in range(len(y_pred)):
+    if y_pred[i] == y_test.iloc[i]:
+        accuracy += 1
+print(f"Accuracy = {accuracy / len(y_pred)}")
+
+# Making predictions using scikit learn
+from sklearn.linear_model import LogisticRegression
+# Create an instance and fit the model
+lr_model = LogisticRegression()
+lr_model.fit(X_train.values.reshape(-1, 1), y_train.values.reshape(-1, 1))
+# Making predictions
+y_pred_sk = lr_model.predict(X_test.values.reshape(-1, 1))
+plt.clf()
+plt.scatter(X_test, y_test)
+plt.scatter(X_test, y_pred_sk, c="red")
+plt.show()
+# Accuracy
+print(f"Accuracy = {lr_model.score(X_test.values.reshape(-1, 1), y_test.values.reshape(-1, 1))}")
+
+
+
+
+
+
+
+
+
+
+******************************************5.Decision Tree Classification model for a given datasets and use it to classify a new sample****************************************************
+Source code :
+from google.colab import files
+uploaded = files.upload()
+import pandas as pd
+import io
+df = pd.read_csv(io.BytesIO(uploaded['Fifa_world_cup_matches.csv']))
+df.head()
+
+!pip install tensorflow_decision_forests
+label = "team1"
+classes = list(df[label].unique())
+print(f"Label classes: {classes}")
+np.random.seed(1)
+# Use the ~10% of the examples as the testing set
+# and the remaining ~90% of the examples as the training set.
+test_indices = np.random.rand(len(df)) < 0.1
+pandas_train_dataset = df[~test_indices]
+pandas_test_dataset = df[test_indices]
+print("Training examples: ", len(pandas_train_dataset))
+print("Testing examples: ", len(pandas_test_dataset))
+tf_train_dataset = tfdf.keras.pd_dataframe_to_tf_dataset(pandas_train_dataset, label=label)
+model = tfdf.keras.CartModel()
+model.fit(tf_train_dataset)
+tfdf.model_plotter.plot_model_in_colab(model, max_depth=10)
+
+model.compile("accuracy")
+print("Train evaluation: ", model.evaluate(tf_train_dataset, return_dict=True))
+tf_test_dataset = tfdf.keras.pd_dataframe_to_tf_dataset(pandas_test_dataset, label=label)
+print("Test evaluation: ", model.evaluate(tf_test_dataset, return_dict=True))
+
+!pip install keras-tuner
+import keras_tuner as kt
+def build_model(hp):
+  model = tfdf.keras.CartModel(
+      min_examples=hp.Choice("min_examples",
+          # Try four possible values for "min_examples" hyperparameter.
+          # min_examples=10 would limit the growth of the decision tree,
+          # while min_examples=1 would lead to deeper decision trees.
+         [1, 2, 5, 10]),
+      validation_ratio=hp.Choice("validation_ratio",
+         # Three possible values for the "validation_ratio" hyperparameter.
+         [0.0, 0.05, 0.10]),
+      )
+  model.compile("accuracy")
+  return model
+tuner = kt.RandomSearch(
+    build_model,
+    objective="val_accuracy",
+    max_trials=10,
+    directory="/tmp/tuner",
+    project_name="tune_cart")
+tuner.search(x=tf_train_dataset, validation_data=tf_test_dataset)
+best_model = tuner.get_best_models()[0]
+print("Best hyperparameters: ", tuner.get_best_hyperparameters()[0].values)
+model = tfdf.keras.CartModel(min_examples=2, validation_ratio=0.0)
+model.fit(tf_train_dataset)
+
+model.compile("accuracy")
+print("Test evaluation: ", model.evaluate(tf_test_dataset, return_dict=True))
+tfdf.model_plotter.plot_model_in_colab(model, max_depth=10)
+       
+                                     
+
+
+                                    
+
+
+
+
+
+
+
+
+**********************************************************6.Implement Naives bayes theorem to classify the English text********************************************************************
+Source Code:
+pip install scikit-learn pandas
+from sklearn.datasets import fetch_20newsgroups
+categories = ['alt.atheism', 'talk.religion.misc', 'comp.graphics', 'sci.space']
+train_data = fetch_20newsgroups(subset='train', categories=categories, shuffle=True, random_state=42)
+test_data = fetch_20newsgroups(subset='test', categories=categories, shuffle=True, random_state=42)
+
+from sklearn.feature_extraction.text import CountVectorizer
+vectorizer = CountVectorizer()
+train_vectors = vectorizer.fit_transform(train_data.data)
+test_vectors = vectorizer.transform(test_data.data)
+
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.metrics import accuracy_score
+model = MultinomialNB()
+model.fit(train_vectors, train_data.target)
+predicted_labels = model.predict(test_vectors)
+print('Accuracy:', accuracy_score(test_data.target, predicted_labels))
+from sklearn.model_selection import GridSearchCV
+param_grid = {'alpha': [0.1, 1, 10], 'fit_prior': [True, False]}
+grid = GridSearchCV(MultinomialNB(), param_grid, cv=5)
+grid.fit(train_vectors, train_data.target)
+print('Best Parameters:', grid.best_params_)
+print('Accuracy:', grid.best_score_)
+
+
+
+
+
+**********************************************************7.Implement K-Nearest neighbour classification using python***************************************************************
+Source Code:
+
+# Import necessary modules
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.datasets import load_iris
+import numpy as np
+import matplotlib.pyplot as plt
+irisData = load_iris()
+
+# Create feature and target arrays
+X = irisData.data
+y = irisData.target
+
+# Split into training and test set
+X_train, X_test, y_train, y_test = train_test_split(
+			X, y, test_size = 0.2, random_state=42)
+neighbors = np.arange(1, 9)
+train_accuracy = np.empty(len(neighbors))
+test_accuracy = np.empty(len(neighbors))
+
+# Loop over K values
+for i, k in enumerate(neighbors):
+	knn = KNeighborsClassifier(n_neighbors=k)
+	knn.fit(X_train, y_train)
+	# Compute training and test data accuracy
+	train_accuracy[i] = knn.score(X_train, y_train)
+	test_accuracy[i] = knn.score(X_test, y_test)
+
+# Generate plot
+plt.plot(neighbors, test_accuracy, label = 'Testing dataset Accuracy')
+plt.plot(neighbors, train_accuracy, label = 'Training dataset Accuracy')
+plt.legend()
+plt.xlabel('n_neighbors')
+plt.ylabel('Accuracy') 
+plt.show()
+
+
+
+
+
+
+
+
+
+****************************************************8.Apply K-means Clustering algorithm to cluster a set of data stored in .csv file*****************************************************
+Source Code:
+
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import StandardScaler
+from sklearn.datasets import load_wine
+from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
+
+df = load_wine(as_frame=True)
+df = df.frame
+df.head()
+
+
+
+df.drop('target', axis =1, inplace=True)
+# Check the data informations
+df.info()
+
+
+scaler =StandardScaler()
+features =scaler.fit(df)
+features =features.transform(df)
+# Convert to pandas Dataframe
+scaled_df =pd.DataFrame(features,columns=df.columns)
+# Print the scaled data
+scaled_df.head(2)
+
+X=scaled_df.values
+
+wcss = {}
+for i in range(1, 11):
+	kmeans = KMeans(n_clusters = i, init = 'k-means++', random_state = 42)
+	kmeans.fit(X)
+	wcss[i] = kmeans.inertia_
+
+plt.plot(wcss.keys(), wcss.values(), 'gs-')
+plt.xlabel("Values of 'k'")
+plt.ylabel('WCSS')
+plt.show()
+
+
+
+
+kmeans=KMeans(n_clusters=3)
+kmeans.fit(X)
+
+
+kmeans.cluster_centers_
+
+
+kmeans.labels_
+
+
+pca=PCA(n_components=2)
+reduced_X=pd.DataFrame(data=pca.fit_transform(X),columns=['PCA1','PCA2'])
+#Reduced Features
+reduced_X.head()
+
+
+centers=pca.transform(kmeans.cluster_centers_)
+centers
+plt.figure(figsize=(7,5))
+# Scatter plot
+plt.scatter(reduced_X['PCA1'],reduced_X['PCA2'],c=kmeans.labels_)
+plt.scatter(centers[:,0],centers[:,1],marker='x',s=100,c='red')
+plt.xlabel('PCA1')
+plt.ylabel('PCA2')
+plt.title('Wine Cluster')
+plt.tight_layout()
+
+***************************************************************9.Build a model using SVM algorithm for any cancer datasets***********************************************************
+Source Code:
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+%matplotlib inline
+sns.set_style('whitegrid')
+
+from sklearn.datasets import load_breast_cancer
+cancer = load_breast_cancer()
+col_names = list(cancer.feature_names)
+col_names.append('target')
+df = pd.DataFrame(np.c_[cancer.data, cancer.target], columns=col_names)
+df.head()
+
+
+print(cancer.target_names)
+
+df.describe()
+
+df.info()
+
+df.columns
+sns.pairplot(df, hue='target', vars=['mean radius', 'mean texture', 'mean perimeter', 'mean area',
+                                     'mean smoothness', 'mean compactness', 'mean concavity',
+                                     'mean concave points', 'mean symmetry', 'mean fractal dimension'])
+
+
+
+
+
+
+
+
+
+***************************************************10.Implement an algorithm to demonstrate the significance of Genetic Algorithm*****************************************************
+Source Code:
+# Import necessary libraries
+import numpy as np
+import pandas as pd
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import GridSearchCV
+
+# Load the penguin dataset (You can replace 'penguins.csv' with your dataset)
+from google.colab import files
+uploaded = files.upload()
+
+import io
+df = pd.read_csv(io.BytesIO(uploaded['penguins.csv']))
+df.head()
+
+# Preprocessing
+# Remove unnecessary columns and NaN values
+data = df.drop(['island','sex',], axis=1)
+data = data.dropna()
+
+# Encode the target variable (species) using LabelEncoder
+from sklearn.preprocessing import LabelEncoder
+label_encoder = LabelEncoder()
+data['species'] = label_encoder.fit_transform(data['species'])
+
+# Split the data into features (X) and target (y)
+X = data.drop('species', axis=1)
+y = data['species']
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Standardize features (scaling)
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# Define the genetic algorithm
+def genetic_algorithm(X_train, y_train, X_test, y_test, n_generations, population_size):
+    best_accuracy = 0
+    best_features = None
+    best_params = None
+    for generation in range(n_generations):
+        # Randomly select a subset of features
+        n_features = X_train.shape[1]
+        selected_features = np.random.choice([0, 1], size=n_features)
+
+        # Create a classifier with random hyperparameters
+        clf = RandomForestClassifier(n_estimators=np.random.randint(10, 101),
+                                     max_depth=np.random.randint(1, 11),
+                                     random_state=42)
+
+        # Train the classifier on the selected features
+        clf.fit(X_train[:, selected_features >=0], y_train)
+
+        # Evaluate the classifier on the test set
+        y_pred = clf.predict(X_test[:, selected_features >=0])
+        accuracy = accuracy_score(y_test, y_pred)
+
+        # Update the best solution if a better one is found
+        if accuracy > best_accuracy:
+            best_accuracy = accuracy
+            best_features = selected_features
+            best_params = clf.get_params()
+
+    return best_features, best_params, best_accuracy
+
+# Run the genetic algorithm
+best_features, best_params, best_accuracy = genetic_algorithm(X_train, y_train, X_test, y_test, n_generations=50, population_size=50)
+
+# Print the best features selected by the genetic algorithm
+print("Best features:", best_features)
+
+# Print the best hyperparameters found by the genetic algorithm
+print("Best hyperparameters:", best_params)
+
+# Print the best accuracy achieved
+print("Best accuracy:", best_accuracy)
+
+
+
+
+
+
