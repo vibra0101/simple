@@ -1,0 +1,143 @@
+*****************************************************************************************************************************************
+2. Implementation of Transformation of an Image
+Source Code :
+a)	To Increase
+a=imread('yellowlily.jpg');
+b=double(a)+80;
+imshow(a),title('original image')
+figure,imshow(uint8(b)),title('increased image')
+b)	To Decrease
+a=imread('yellowlily.jpg');
+b=double(a)-80;
+imshow(a),title('original image')
+figure,imshow(uint8(b)),title('decreased image')
+
+*************************************************************************************************
+3. To obtain histogram equalization image
+Source Code :
+clc 
+clear all 
+close all 
+a=imread('pout.tif'); 
+%perform histogram equalisation 
+b=histeq(a); 
+subplot(2,2,1),imshow(a),title('original image'), 
+subplot(2,2,2),imshow(b),title('After histogram equalisation'), 
+subplot(2,2,3),imhist(a),title('original histogram') 
+subplot(2,2,4),imhist(b),title('After histogram equalisation')
+
+*********************************************************************************************************************************
+4. Display of Fourier Transform (1-D & 2-D) of an image
+image = imread('yellowlily.jpg');  
+if size(image, 3) == 3
+    image = rgb2gray(image);
+end
+figure;
+subplot(2, 3, 1);
+imshow(image);
+title('Original Image');
+f_transform_1d = fftshift(fft(image));
+subplot(2, 3, 2);
+imshow(log(abs(f_transform_1d) + 1), []);
+title('1D Fourier Transform (Magnitude)');
+subplot(2, 3, 3);
+imshow(angle(f_transform_1d), []);
+title('1D Fourier Transform (Phase)');
+f_transform_2d = fftshift(fft2(image));
+subplot(2, 3, 4);
+imshow(log(abs(f_transform_2d) + 1), []);
+title('2D Fourier Transform (Magnitude)');
+subplot(2, 3, 5);
+imshow(angle(f_transform_2d), []);
+title('2D Fourier Transform (Phase)');
+subplot(2, 3, 6);
+imshow(real(f_transform_2d), []);
+title('Real Part of 2D Fourier Transform');
+*********************************************************************************************************
+5. To Implement Smoothing or Averaging filter in spatial domain
+Source Code :
+clc; clear all; close all;
+x = imread('C:\Program Files\MATLAB\R2016a\toolbox\images\imdata\greens.jpg');
+x = double(rgb2gray(x));
+kernel = ones(3) / 9;
+smoothed_image = uint8(conv2(x, kernel, 'same'));
+subplot(1, 2, 1), imshow(uint8(x)), title('Original Image');
+subplot(1, 2, 2), imshow(smoothed_image), title('Smoothed Image');
+
+*******************************************************************************************************
+6. To Perform opening and closing of the image
+Source Code :
+originalImage = imread('C:\Program Files\MATLAB\R2016a\toolbox\images\imdata\greens.jpg');
+binaryImage = imbinarize(rgb2gray(originalImage));
+se = strel('disk', 5);
+openedImage = imopen(binaryImage, se);
+closedImage = imclose(binaryImage, se);
+subplot(1, 3, 1), imshow(binaryImage), title('Binary Image');
+subplot(1, 3, 2), imshow(openedImage), title('Opened Image');
+subplot(1, 3, 3), imshow(closedImage), title('Closed Image');
+
+**************************************************************************************************************
+7. Implementation of image restoring techniques
+Source Code :
+clc; clear all; close all;
+img = imread('C:\Program Files\MATLAB\R2016a\toolbox\images\imdata\kids.tif');
+PSF = fspecial('gaussian', [15, 15], 2);
+blurred_noisy_img = uint8(imfilter(double(img), PSF, 'conv', 'circular') + 25 * randn(size(img)));
+deblurred_img = deconvwnr(blurred_noisy_img, PSF, 25^2 / 2);
+subplot(1, 3, 1), imshow(img), title('Original');
+subplot(1, 3, 2), imshow(blurred_noisy_img), title('Blurred & Noisy');
+subplot(1, 3, 3), imshow(deblurred_img), title('Restored (Wiener)');
+
+********************************************************************************************************
+8. Construct a program of sharpen image using gradient mask
+Source Code :
+originalImage = imread('onion.png');
+originalImage = im2double(originalImage);
+laplacianFilter = fspecial('laplacian');
+sharpenedImage = imfilter(originalImage, laplacianFilter, 'replicate');
+sharpeningStrength = 1.5;
+sharpenedImage = originalImage + sharpeningStrength * sharpenedImage;
+sharpenedImage = max(0, min(1, sharpenedImage));
+figure;
+subplot(1, 2, 1);
+imshow(originalImage);
+title('Original Image');
+subplot(1, 2, 2);
+imshow(sharpenedImage);
+title('Sharpened Image');
+
+************************************************************************************************************************
+9. Implementation of image segmentation techniques
+Source Code :
+originalImage = imread('yellowlily.jpg');
+doubleImage = double(originalImage);
+vectorImage = reshape(doubleImage, [], 3);
+k = 3;
+[idx, ~] = kmeans(vectorImage, k);
+segmentedImg = reshape(idx, size(doubleImage, 1), size(doubleImage, 2));
+figure;
+subplot(1, 2, 1), imshow(originalImage), title('Original Image');
+subplot(1, 2, 2), imshow(label2rgb(segmentedImg)), title('Segmented Image');
+
+************************************************************************************************************************
+10. Perform Canny Edge detection Algorithm 
+Source Code :
+originalImage = imread('onion.png'); 
+if size(originalImage, 3) == 3
+   grayImage = rgb2gray(originalImage);
+else
+   grayImage = originalImage;
+end
+sigma = 1.0;
+threshold = 0.2; 
+edgeImage = edge(grayImage, 'Canny', threshold, sigma);
+figure;
+subplot(1, 2, 1);
+imshow(grayImage);
+title('Original Image');
+subplot(1, 2, 2);
+imshow(edgeImage);
+title('Canny Edge Detection');
+
+
+
